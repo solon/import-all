@@ -1,7 +1,7 @@
 {
   "name": "import-all",
   "version": "1.0.1",
-  "description": "given the path to a directory containing es6 modules, requires all of their default exports and returns them as an array",
+  "description": "Given the path to a directory containing ES6 modules, requires all of their default exports and returns them as an array or as an object",
   "repository": {
     "type": "git",
     "url": "https://github.com/charlieschwabacher/import-all.git"
