@@ -1,31 +1,29 @@
-var fs = require('fs');
-var path = require('path');
+var fs = require('fs')
+var path = require('path')
 
-module.exports = function(importPath, asObject = false) {
-  return fs
-    .readdirSync(importPath)
-    .filter(function(fileName) {
-      return fileName.match(/\.js$/);
-    })
-    .map(function(fileName) {
-      return {
-        name: fileName.split('.js')[0],
-        module: require(path.join(importPath, fileName)),
-      };
-    })
-    .filter(function({ name, module }) {
-      return { name, module: module.__esModule };
-    })
-    .map(function({ name, module }) {
-      return { name, module: module.default };
-    })
-    .reduce(
-      (accumulator, currentValue, currentIndex) => {
-        asObject
-          ? (accumulator[currentValue.name] = currentValue.module)
-          : accumulator.push(currentValue.module);
-        return accumulator;
-      },
-      asObject ? {} : []
-    ); 
-};
+delete require.cache[__filename]
+const parentFile = module.parent.filename
+const parentDir = path.dirname(parentFile)
+
+module.exports = function(importPath) {
+	importPath = path.resolve(parentDir, importPath || '')
+	return fs
+		.readdirSync(importPath)
+		.filter(fileName => fileName.match(/\.js$/))
+		.map(fileName => ({
+			name: fileName.split('.js')[0],
+			module: require(path.join(importPath, fileName)),
+		}))
+		.filter(({ name, module }) => ({ name, module: module.__esModule }))
+		.map(({ name, module }) =>
+			Object.entries(module).map(([k, v]) => ({ name: k === 'default' ? name : k, module: v })),
+		)
+		.reduce((accumulator, currentValue, currentIndex) => {
+			if (Array.isArray(currentValue)) {
+				for (const item of currentValue) accumulator[item.name] = item.module
+			} else {
+				accumulator[currentValue.name] = currentValue.module
+			}
+			return accumulator
+		}, {})
+}
