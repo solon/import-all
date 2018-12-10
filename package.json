@@ -1,6 +1,6 @@
 {
   "name": "@briansolon/import-all",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Given the path to a directory containing ES6 modules, requires all of their default and named exports and returns them as an object",
   "repository": {
     "type": "git",
